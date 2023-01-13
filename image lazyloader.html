@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>image lazy load</title>
+</head>
+<body>
+
+    <img data-src="image.jpg" alt="example image" class="lazy">
+<script>
+    var lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
+
+if ("IntersectionObserver" in window) {
+  let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        let lazyImage = entry.target;
+        lazyImage.src = lazyImage.dataset.src;
+        lazyImage.classList.remove("lazy");
+        lazyImageObserver.unobserve(lazyImage);
+      }
+    });
+  });
+
+  lazyImages.forEach(function(lazyImage) {
+    lazyImageObserver.observe(lazyImage);
+  });
+} else {
+  // Fallback to a more compatible method
+}
+
+
+
+
+
+
+// Use noscript tags: You can include a <noscript> tag inside the <img> tag, which will contain the image source that will be visible to search engines.
+// Copy code
+// <img data-src="image.jpg" alt="example image" class="lazy">
+// <noscript>
+//   <img src="image.jpg" alt="example image">
+// </noscript>
+// Use schema.org markup: You can use schema.org markup to provide search engines with additional information about your images, such as the image source, description, and caption.
+// Copy code
+// <div itemscope itemtype="http://schema.org/ImageObject">
+//   <img data-src="image.jpg" alt="example image" class="lazy" itemprop="contentUrl">
+//   <meta itemprop="name" content="example image">
+//   <meta itemprop="description" content="image description">
+// </div>
+</script>
+    
+</body>
+</html>
