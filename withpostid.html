@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>with post id </title>
+</head>
+<body>
+    <div id="container">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script type="text/javascript">
+          function mrbracking(json) {
+            for (var i = 0; i < json.feed.entry.length; i++) {
+              var entry = json.feed.entry[i];
+              var postId = entry.id.$t;
+              var postTitle = entry.title.$t;
+              var postImage = entry.media$thumbnail.url;
+              var postUrl = entry.link[0].href;
+              var postContent = entry.content.$t;
+              var postAuthor = entry.author[0].name.$t;
+              var postPublished = entry.published.$t;
+              
+              var postContainer = $('<div class="post-container" data-post-id="'+ postId+'"></div>');
+              var postTitleElement = $('<h2 class="post-title"></h2>').text(postTitle);
+              var postImageElement = $('<img class="post-image">').attr('src', postImage);
+              var postContentElement = $('<div class="post-content" style="display:none;"></div>').html(postContent);
+var postAuthorElement = $('<span class="post-author"></span>').text(postAuthor);
+var postPublishedElement = $('<span class="post-published"></span>').text(postPublished);
+var postLink = $('<a class="post-link"></a>').attr('href', postUrl).text('Read more');
+
+    postContainer.append(postTitleElement);
+    postContainer.append(postImageElement);
+    postContainer.append(postContentElement);
+    postContainer.append(postAuthorElement);
+    postContainer.append(postPublishedElement);
+    postContainer.append(postLink);
+    
+    postContainer.click(function() {
+      var postId = $(this).data("post-id");
+      var postUrl = "https://www.blogger.com/feeds/"+postId+"/posts/default";
+      loadPost(postUrl);
+    });
+    
+    $("#container").append(postContainer);
+  }
+}
+function loadPost(url) {
+  $.ajax({
+    url: url,
+    type: "GET",
+    dataType: "jsonp",
+    success: function(data) {
+      var postData = data.feed.entry[0];
+      var postId = postData.id.$t;
+      var postTitle = postData.title.$t;
+      var postImage = postData.media$thumbnail.url;
+      var postUrl = postData.link[0].href;
+      var postContent = postData.content.$t;
+      var postAuthor = postData.author[0].name.$t;
+      var postPublished = postData.published.$t;
+      
+      // code to display the post data
+    },
+    error: function(error) {
+      console.log(error);
+    }
+  });
+}
+
+  </script> 
+  <script src="https://www.mrlaboratory.info/feeds/posts/default?redirect=false&amp;start-index=1&amp;max-results=10&amp;alt=json-in-script&amp;callback=mrbracking"></script>
+</div>
+
+              
+</body>
+</html>

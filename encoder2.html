@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encryption and Decryption</title>
+</head>
+<body>
+    <h1>Encryption and Decryption</h1>
+    <form>
+      <label for="plain-text">Enter plain text:</label>
+      <input type="text" id="plain-text" name="plain-text" required>
+      <br>
+      <label for="key">Enter key:</label>
+      <input type="text" id="key" name="key" required>
+      <br>
+      <button type="button" id="encrypt-btn">Encrypt</button>
+      <button type="button" id="decrypt-btn" disabled>Decrypt</button>
+  </form>
+  <br>
+  <p>Encrypted Text: <span id="encrypted-text"></span></p>
+  <p>Decrypted Text: <span id="decrypted-text"></span></p>
+  <script>
+
+
+const key = new TextEncoder().encode(key);
+
+
+    // Encrypt plain text
+    const encryptBtn = document.getElementById('encrypt-btn');
+    encryptBtn.addEventListener('click', async function() {
+    const plainText = document.getElementById('plain-text').value;
+    const key = document.getElementById('key').value;
+    const { iv, encrypted } = await encryptText(plainText, key);
+    const encryptedText = Array.from(new Uint8Array(encrypted)).map(byte => byte.toString(16).padStart(2, '0')).join('');
+    document.getElementById('encrypted-text').innerText = encryptedText;
+    document.getElementById('decrypt-btn').disabled = false;
+  });
+  
+  // Decrypt encrypted text
+  const decryptBtn = document.getElementById('decrypt-btn');
+  decryptBtn.addEventListener('click', async function() {
+    const encryptedText = document.getElementById('encrypted-text').innerText;
+    const key = document.getElementById('key').value;
+    const encryptedArray = new Uint8Array(encryptedText.match(/.{2}/g).map(byte => parseInt(byte, 16)));
+    const decrypted = await decryptText(encryptedArray, key, iv);
+    document.getElementById('decrypted-text').innerText = decrypted;
+  });
+  
+  async function encryptText(text, key) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const algo = { name: "AES-GCM", iv };
+    const keyObject = await crypto.subtle.importKey('raw', key, algo, false, ['encrypt']);
+    const cipherText = await crypto.subtle.encrypt(algo, keyObject, new TextEncoder().encode(text));
+    return { iv, cipherText }
+}
+
+  
+  async function decryptText(encrypted, key, iv) {
+  const algo = { name: "AES-GCM", iv };
+  const keyObject = await crypto.subtle.importKey('raw', key, algo, false, ['decrypt']);
+  const decryptedArray = await crypto.subtle.decrypt(algo, keyObject, encrypted);
+  const decryptedText = new TextDecoder().decode(decryptedArray);
+  return decryptedText;
+  }
+  </script>
+  
+</body>
+</html>

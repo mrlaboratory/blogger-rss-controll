@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login with google</title>
+</head>
+<body>
+    
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <script>
+        gapi.load('auth2', function() {
+            gapi.auth2.init({
+                client_id: 'nomadic-archway-357618.apps.googleusercontent.com',
+            });
+        });
+    </script>
+    
+<script>
+    function onSignIn(googleUser) {
+    var profile = googleUser.getBasicProfile();
+    var id_token = googleUser.getAuthResponse().id_token;
+    var name = profile.getName();
+    var email = profile.getEmail();
+    console.log("Name: " + name);
+    console.log("Email: " + email);
+    console.log("ID Token: " + id_token);
+}
+
+</script>
+
+</body>
+</html>

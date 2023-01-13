@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cooment with read more button</title>
+</head>
+<body>
+
+<div id="comments-container"></div>
+<button id="load-more-button">Load More Comments</button>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    var comments = [];
+    var commentsPerPage = 100;
+    var currentPage = 0;
+
+    function getComments(json) {
+        for (var i = 0; i < json.feed.entry.length; i++) {
+            var entry = json.feed.entry[i];
+            var commentId = entry.id.$t;
+            var commentAuthor = entry.author[0].name.$t;
+            var commentAuthorImage = entry.author[0].gd$image.src;
+            var commentPublished = entry.published.$t;
+            var commentContent = entry.content.$t;
+
+            comments.push({
+                id: commentId,
+                author: commentAuthor,
+                authorImage: commentAuthorImage,
+                published: commentPublished,
+                content: commentContent
+            });
+        }
+    }
+
+    function loadComments() {
+        var startIndex = currentPage * commentsPerPage;
+        var endIndex = startIndex + commentsPerPage;
+
+        for (var i = startIndex; i < endIndex; i++) {
+            if (i >= comments.length) {
+                break;
+            }
+
+            var comment = comments[i];
+
+            var commentContainer = $('<div class="comment-container"></div>');
+            var commentIdElement = $('<span class="comment-id"></span>').text(comment.id);
+            var commentAuthorElement = $('<span class="comment-author"></span>').text(comment.author);
+            var commentAuthorImageElement = $('<img class="comment-author-image">').attr('src', comment.authorImage);
+            var commentPublishedElement = $('<span class="comment-published"></span>').text(comment.published);
+            var commentContentElement = $('<div class="comment-content"></div>').text(comment.content);
+
+            commentContainer.append(commentIdElement);
+            commentContainer.append(commentAuthorImageElement);
+            commentContainer.append(commentAuthorElement);
+            commentContainer.append(commentPublishedElement);
+            commentContainer.append(commentContentElement);
+            $("#comments-container").append(commentContainer);
+        }
+        currentPage++;
+        if(i >= comments.length ){
+            $("#load-more-button").remove();
+        }
+    }
+
+    $("#load-more-button").click(function() {
+        loadComments();
+    });
+
+    loadComments();
+</script>
+
+<script src="https://www.blogger.com/feeds/3245545883165649821/comments/default?alt=json-in-script&callback=getComments"></script>
+
+    
+</body>
+</html>

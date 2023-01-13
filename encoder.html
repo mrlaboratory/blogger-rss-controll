@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>encoder</title>
+</head>
+<body>
+
+
+    <script>
+        async function encryptText(text, key) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const algo = { name: 'AES-GCM', iv };
+  const keyObject = await crypto.subtle.importKey('raw', key, algo, false, ['encrypt']);
+  const encrypted = await crypto.subtle.encrypt(algo, keyObject, new TextEncoder().encode(text));
+  return { iv, encrypted }
+}
+
+        //Encryption
+var CryptoJS = require("crypto-js");
+var text = "my secret text";
+var key = "my secret key";
+var ciphertext = CryptoJS.AES.encrypt(text, key);
+console.log(ciphertext.toString());
+
+//Decryption
+var bytes  = CryptoJS.AES.decrypt(ciphertext.toString(), key);
+var originalText = bytes.toString(CryptoJS.enc.Utf8);
+console.log(originalText);
+
+    </script>
+    
+</body>
+</html>

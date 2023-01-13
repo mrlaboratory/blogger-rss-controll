@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rss</title>
+</head>
+<body>
+    <!-- https://www.mrlaboratory.info/feeds/posts/default?redirect=false&amp;start-index=1&amp;max-results=10&amp;alt=json-in-script&amp;callback=mrbracking -->
+
+
+<div id="container">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script type="text/javascript">
+    function mrbracking(json) {
+      for (var i = 0; i < json.feed.entry.length; i++) {
+        for (var j = 0; j < json.feed.entry[i].link.length; j++) {
+          if (json.feed.entry[i].link[j].rel == 'alternate') {
+            var postUrl = json.feed.entry[i].link[j].href;
+            break;
+          }
+        }
+        var postTitle = json.feed.entry[i].title.$t;
+        var postImage = json.feed.entry[i].media$thumbnail.url;
+        
+        var postContainer = $('<div class="post-container"></div>');
+        var postTitleElement = $('<h2 class="post-title"></h2>').text(postTitle);
+        var postImageElement = $('<img class="post-image">').attr('src', postImage);
+        var postLink = $('<a class="post-link"></a>').attr('href', postUrl).text('Read more');
+        
+        postContainer.append(postTitleElement);
+        postContainer.append(postImageElement);
+        postContainer.append(postLink);
+        
+        $("#container").append(postContainer);
+      }
+    }
+  </script> 
+  <script src="https://www.mrlaboratory.info/feeds/posts/default?redirect=false&amp;start-index=1&amp;max-results=10&amp;alt=json-in-script&amp;callback=mrbracking"></script>
+</div>
+
+
+</body>
+</html>
